@@ -1,0 +1,17 @@
+# Environment files (API keys, DB credentials)
+.env
+
+# Google API secrets
+client_secret_*.json
+
+# Composer dependencies (PHP)
+vendor/
+
+# Node.js dependencies
+node_modules/
+
+# Log files
+*.log
+
+# Build output
+dist/
