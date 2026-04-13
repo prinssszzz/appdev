@@ -111,7 +111,7 @@ if (isset($_POST['login'])) {
 <body class="bg-light d-flex align-items-center vh-100">
     <div class="container card p-4 shadow-sm" style="max-width: 400px;">
         <h2 class="text-center mb-4">Login</h2>
-        <?php if(isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
+        <?php if(isset($error)) echo "<div class='alert alert-danger'>" . htmlspecialchars($error, ENT_QUOTES, 'UTF-8') . "</div>"; ?>
         <form method="POST">
             <div class="mb-3"><input type="email" name="email" class="form-control" placeholder="Email" required></div>
             <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
@@ -127,8 +127,8 @@ if (isset($_POST['login'])) {
 
         <!-- Google Sign-In widget -->
         <div id="g_id_onload"
-             data-client_id="<?php echo $_ENV['GOOGLE_CLIENT_ID']; ?>"
-             data-login_uri="http://localhost/Basbas/login.php"
+             data-client_id="<?php echo htmlspecialchars($_ENV['GOOGLE_CLIENT_ID'], ENT_QUOTES, 'UTF-8'); ?>"
+             data-login_uri="<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . strtok($_SERVER['REQUEST_URI'], '?'); ?>"
              data-auto_prompt="false">
         </div>
         <div class="g_id_signin"

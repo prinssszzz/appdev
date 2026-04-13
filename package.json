@@ -1,0 +1,9 @@
+{
+  "engines": {
+    "node": "none"
+  },
+  "private": true,
+  "scripts": {
+    "build": "echo 'PHP project - no build needed'"
+  }
+}

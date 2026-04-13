@@ -2,6 +2,9 @@
 session_start();
 include 'config.php';
 
+$tokenError = null;
+$user_id = null;
+
 if (isset($_GET['token'])) {
     $token = $_GET['token'];
 
@@ -16,10 +19,9 @@ if (isset($_GET['token'])) {
         $expires = $row['reset_expires'];
 
         if (strtotime($expires) < time()) {
-            die("Token expired.");
-        }
-
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $tokenError = "This password reset link has expired. Please request a new one.";
+            $user_id = null;
+        } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
             $newPassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
             $stmt = $conn->prepare("UPDATE user SET password=?, reset_token=NULL, reset_expires=NULL WHERE id=?");
@@ -30,8 +32,10 @@ if (isset($_GET['token'])) {
             exit;
         }
     } else {
-        die("Invalid token.");
+        $tokenError = "This reset link is invalid or has already been used.";
     }
+} else {
+    $tokenError = "No reset token provided.";
 }
 ?>
 <!DOCTYPE html>
@@ -43,10 +47,17 @@ if (isset($_GET['token'])) {
 <body class="bg-light d-flex align-items-center vh-100">
     <div class="container card p-4 shadow-sm" style="max-width: 400px;">
         <h2 class="text-center mb-4">Reset Password</h2>
-        <form method="POST">
-            <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="New Password" required></div>
-            <button type="submit" class="btn btn-success w-100">Reset Password</button>
-        </form>
+        <?php if ($tokenError): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($tokenError, ENT_QUOTES, 'UTF-8'); ?></div>
+            <div class="text-center mt-3">
+                <a href="forgotpassword.php" class="btn btn-primary">Request New Reset Link</a>
+            </div>
+        <?php else: ?>
+            <form method="POST">
+                <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="New Password" required></div>
+                <button type="submit" class="btn btn-success w-100">Reset Password</button>
+            </form>
+        <?php endif; ?>
     </div>
 </body>
 </html>
