@@ -21,7 +21,7 @@ if (!isset($_SESSION['id'])) {
     </nav>
     <div class="container mt-5">
         <div class="card p-5 shadow-lg border-0 bg-white">
-            <h1 class="display-4">Hello, <?php echo $_SESSION['fname']; ?>!</h1>
+            <h1 class="display-4">Hello, <?php echo htmlspecialchars($_SESSION['fname'], ENT_QUOTES, 'UTF-8'); ?>!</h1>
             <p class="lead text-muted">Welcome to your internal portal. Your session is now active.</p>
             <hr>
             <p>You can now manage your profile and view application settings.</p>
