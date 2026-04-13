@@ -7,13 +7,14 @@ if (isset($_POST['signup'])) {
     $email = $_POST['email'];
     $pass  = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO user (firstname, lastname, middlename, email, password) 
-            VALUES ('$fname', '$lname', '$mname', '$email', '$pass')";
-    
-    if (mysqli_query($conn, $sql)) {
+    $stmt = $conn->prepare("INSERT INTO user (firstname, lastname, middlename, email, password) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $fname, $lname, $mname, $email, $pass);
+
+    if ($stmt->execute()) {
         header("Location: login.php");
+        exit();
     } else {
-        echo "Error: " . mysqli_error($conn);
+        $error = "Error: " . $conn->error;
     }
 }
 ?>
@@ -28,6 +29,7 @@ if (isset($_POST['signup'])) {
         <div class="card mx-auto shadow-sm" style="max-width: 500px;">
             <div class="card-body">
                 <h3 class="text-center mb-4">Create Account</h3>
+                <?php if(isset($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
                 <form method="POST">
                     <div class="mb-3"><input type="text" name="firstname" class="form-control" placeholder="First Name" required></div>
                     <div class="mb-3"><input type="text" name="lastname" class="form-control" placeholder="Last Name" required></div>
